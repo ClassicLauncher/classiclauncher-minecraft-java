@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>net.classiclauncher.extension</groupId>
+	<artifactId>classiclauncher-minecraft-java</artifactId>
+	<version>0.0.1</version>
+
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<!--
+			The Launcher JAR provides all Launcher classes at compile time.
+			It is NOT included in the extension JAR — the Launcher classloader
+			supplies these classes when it loads the extension at runtime.
+		-->
+		<dependency>
+			<groupId>net.classiclauncher</groupId>
+			<artifactId>ClassicLauncher</artifactId>
+			<version>0.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!--
+			The Microsoft Account extension provides MinecraftAccount (the abstract
+			auth contract) and TiledBackgroundRenderer. Declared as a required extension
+			in manifest.yml — loaded by the Launcher before this extension.
+		-->
+		<dependency>
+			<groupId>net.classiclauncher.extension</groupId>
+			<artifactId>microsoft-auth</artifactId>
+			<version>0.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!--
+			Gson is used by VersionJsonParser and AssetDownloader to parse Minecraft
+			version JSON and asset index files. Available at runtime via the
+			microsoft-auth extension's declared dependencies.
+		-->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.13.2</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!--
+			Log4j2 API is bundled in the Launcher JAR and available at runtime.
+		-->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.24.3</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Spotless Formatter -->
+			<plugin>
+				<groupId>com.diffplug.spotless</groupId>
+				<artifactId>spotless-maven-plugin</artifactId>
+				<version>3.3.0</version>
+				<configuration>
+					<java>
+						<removeUnusedImports/>
+						<importOrder>
+							<order>java,javax,org,com,</order>
+						</importOrder>
+						<eclipse>
+							<file>eclipse-formatter.xml</file>
+						</eclipse>
+						<trimTrailingWhitespace/>
+						<lineEndings>UNIX</lineEndings>
+					</java>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<phase>verify</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.3.0</version>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Implementation-Title>Minecraft Java Edition Extension</Implementation-Title>
+							<Implementation-Version>${project.version}</Implementation-Version>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
