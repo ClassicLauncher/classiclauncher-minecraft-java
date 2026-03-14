@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: spotless
+        name: Spotless Java Format
+        language: system
+        entry: mvn spotless:apply
+        pass_filenames: false
+        stages: [ pre-commit ]

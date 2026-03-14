@@ -1,0 +1,14 @@
+name: Minecraft Java Edition
+description: Minecraft Java Edition game support — version API, full launch pipeline (version JSON, libraries, natives, assets), and tiled background rendering.
+minLauncherVersion: "0.0.1"
+pageUrl: https://classiclauncher.net/minecraft-java-extension
+maven:
+  groupId: net.classiclauncher.extension
+  artifactId: classiclauncher-minecraft-java
+  version: 0.0.1
+repositories:
+  0:
+    url: https://repo.classiclauncher.net/releases
+requiredExtensions:
+  0:
+    url: https://raw.githubusercontent.com/ClassicLauncher/classiclauncher-microsoft-auth/refs/heads/main/manifest.yml

@@ -1,0 +1,82 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build JAR (JDK 8)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn package -DskipTests -Dspotless.check.skip=true -q
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar
+          path: target/*.jar
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download JAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: jar
+          path: target/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: target/*.jar
+
+  publish:
+    name: Publish to ClassicLauncher repo
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+          server-id: classiclauncher
+          server-username: CLASSICLAUNCHER_USERNAME
+          server-password: CLASSICLAUNCHER_PASSWORD
+
+      - name: Deploy to ClassicLauncher repo
+        run: mvn deploy -DskipTests -Dspotless.check.skip=true -q
+        env:
+          CLASSICLAUNCHER_USERNAME: ${{ secrets.CLASSICLAUNCHER_USERNAME }}
+          CLASSICLAUNCHER_PASSWORD: ${{ secrets.CLASSICLAUNCHER_PASSWORD }}
