@@ -62,6 +62,17 @@
 		</dependency>
 	</dependencies>
 
+	<distributionManagement>
+		<repository>
+			<id>classiclauncher</id>
+			<url>https://repo.classiclauncher.net/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>classiclauncher</id>
+			<url>https://repo.classiclauncher.net/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<build>
 		<plugins>
 			<!-- Spotless Formatter -->

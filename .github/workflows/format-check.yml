@@ -1,0 +1,33 @@
+name: Format Check
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  spotless:
+    name: Check Java formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Run Spotless check
+        run: mvn spotless:check
+
+      - name: Show formatting diff on failure
+        if: failure()
+        run: |
+          mvn spotless:apply
+          git diff
+          echo ""
+          echo "---"
+          echo "Formatting issues found. Run 'mvn spotless:apply' locally and push again."
